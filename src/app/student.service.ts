@@ -15,4 +15,15 @@ export class StudentService {
   getStudents() {
     return this.afs.collection('students').valueChanges();
   }
+
+  filterData(customfilters) {
+    return new Promise((resolve, reject) => {
+      if (customfilters.criteria == '')
+        reject();
+      if (customfilters.filtervalue == '')
+        reject();
+      resolve(this.afs.collection('students', ref =>
+        ref.where(customfilters.field, customfilters.criteria, customfilters.filtervalue)).valueChanges());
+    })
+  }
 }

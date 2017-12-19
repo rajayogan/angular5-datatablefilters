@@ -11,6 +11,27 @@
 </mat-form-field>
 <button mat-raised-button (click)="addStudent()" color="primary">Add</button>
 </div>
+<div>
+  <mat-form-field>
+  <mat-select [(value)]="filter.field">
+    <mat-option>None</mat-option>
+    <mat-option value="studentAge">Age</mat-option>
+    <mat-option value="studentGrade">Grade</mat-option>
+  </mat-select>
+</mat-form-field>
+  <mat-form-field>
+  <mat-select [(value)]="filter.criteria">
+    <mat-option value=">" *ngIf="filter.field == 'studentAge'">Greater than</mat-option>
+    <mat-option value="<" *ngIf="filter.field == 'studentAge'">Lesser than</mat-option>
+    <mat-option value="==">Equals</mat-option>
+  </mat-select>
+</mat-form-field>
+  <mat-form-field>
+    <input matInput placeholder="Value" [(ngModel)]="filter.filtervalue">
+</mat-form-field>
+<button mat-raised-button (click)="filterData()" color="primary">Filter now</button>
+<button mat-raised-button (click)="resetFilters()" color="primary">Reset Filters</button>
+</div>
 <div class="example-container mat-elevation-z8">
   <mat-table #table [dataSource]="dataSource" matSort>
 

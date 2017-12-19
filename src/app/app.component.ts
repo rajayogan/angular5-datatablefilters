@@ -27,7 +27,11 @@ export class AppComponent implements OnInit {
     studentGrade: ''
   }
 
-
+  filter = {
+    field: 'studentAge',
+    criteria: '',
+    filtervalue: ''
+  };
   displayedColumns = ['Name', 'Age', 'Grade'];
   studentDatabase = new studentDatabase(this.student);
   dataSource;
@@ -42,6 +46,19 @@ export class AppComponent implements OnInit {
 
   addStudent() {
     this.student.addStudent(this.studentDetails);
+  }
+
+  filterData() {
+    this.student.filterData(this.filter).then((res: any) => {
+      res.subscribe((some) => {
+        console.log(some);
+      })
+      this.dataSource = new FilteredDataSource(res);
+    })
+  }
+
+  resetFilters() {
+    this.dataSource = new StudentDataSource(this.studentDatabase, this.sort);
   }
 }
 
@@ -60,7 +77,7 @@ export class studentDatabase {
 export class StudentDataSource extends DataSource<any> {
 
   constructor(private studentDB: studentDatabase, private sort: MatSort) {
-  super()
+    super()
   }
 
   connect(): Observable<any> {
@@ -83,8 +100,8 @@ export class StudentDataSource extends DataSource<any> {
     if (!this.sort.active || this.sort.direction == '') { return data; }
 
     return data.sort((a, b) => {
-      let propertyA: number|string = '';
-      let propertyB: number|string = '';
+      let propertyA: number | string = '';
+      let propertyB: number | string = '';
 
       switch (this.sort.active) {
         case 'Name': [propertyA, propertyB] = [a.studentName, b.studentName]; break;
@@ -98,4 +115,20 @@ export class StudentDataSource extends DataSource<any> {
       return (valueA < valueB ? -1 : 1) * (this.sort.direction == 'asc' ? 1 : -1);
     });
   }
+}
+
+export class FilteredDataSource extends DataSource<any> {
+
+  constructor(private inputobs) {
+    super()
+  }
+
+  connect(): Observable<any> {
+    return this.inputobs;
+  }
+
+  disconnect() {
+
+  }
+
 }
